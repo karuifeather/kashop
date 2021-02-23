@@ -1,5 +1,5 @@
 import axios from 'axios';
 
-export default axios.create({
+export const products = axios.create({
   baseURL: '/api/v1/products',
 });
