@@ -8,12 +8,15 @@
     "start": "node backend/server.js",
     "start:server": "nodemon backend/server.js",
     "start:client": "npm start --prefix frontend",
-    "dev": "concurrently \"npm run start:server\" \"npm run start:client\""
+    "dev": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "import:data": "node backend/transfer -i",
+    "destroy:data": "node backend/transfer -d"
   },
   "keywords": [],
   "author": "mE",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
