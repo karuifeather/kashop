@@ -9,13 +9,13 @@ const Header = () => {
         <Container>
           <LinkContainer to='/'>
             <Navbar.Brand href='/'>
-              <h4>mYsHOP</h4>
+              <h3>mYsHOP</h3>
             </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='ml-auto'>
-              <LinkContainer to='/card'>
+              <LinkContainer to='/cart'>
                 <Nav.Link>
                   <i className='fas fa-shopping-cart'></i>&nbsp; Cart
                 </Nav.Link>

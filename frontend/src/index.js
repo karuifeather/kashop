@@ -9,8 +9,15 @@ import './index.css';
 import App from './App';
 import reducers from './reducers';
 
+const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+const initialState = { cart: { cartItems } };
+
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
+const store = createStore(
+  reducers,
+  initialState,
+  composeEnhancers(applyMiddleware(thunk))
+);
 
 ReactDOM.render(
   <Provider store={store}>
