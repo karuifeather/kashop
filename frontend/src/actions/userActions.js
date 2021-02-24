@@ -5,10 +5,11 @@ export const login = (email, password) => async (dispatch) => {
   try {
     dispatch({ type: USER_LOGIN_REQ });
 
-    const { data } = await userLogin.post('/login');
+    const { data } = await userLogin.post('/login', { email, password });
 
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data.data.user });
 
+    localStorage.setItem('userToken', JSON.stringify(data.token));
     localStorage.setItem('userInfo', JSON.stringify(data.data.user));
   } catch (e) {
     dispatch({

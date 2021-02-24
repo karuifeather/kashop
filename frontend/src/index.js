@@ -10,8 +10,12 @@ import App from './App';
 import reducers from './reducers';
 
 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+const userToken = JSON.parse(localStorage.getItem('userToken')) || null;
 const userInfo = JSON.parse(localStorage.getItem('userInfo')) || null;
-const initialState = { cart: { cartItems }, loggedinUser: { userInfo } };
+const initialState = {
+  cart: { cartItems },
+  loggedinUser: { userToken, userInfo },
+};
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
