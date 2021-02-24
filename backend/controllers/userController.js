@@ -20,3 +20,32 @@ export const getMe = asyncHandler(async (req, res, next) => {
     },
   });
 });
+
+// @desc    Update user profile
+// @route   PATCH /api/v1/users/profile
+// @access  Private
+export const updateMe = asyncHandler(async (req, res, next) => {
+  const user = req.user;
+
+  if (req.body.password) {
+    return next(
+      new AppError('This route is not used for updating password.', 403)
+    );
+  }
+
+  Object.keys(req.body).forEach((curr) => (user[curr] = req.body[curr]));
+
+  const newUser = await user.save({ validateBeforeSave: true });
+
+  return res.status(202).json({
+    status: 'success',
+    data: {
+      user: {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        isAdmin: newUser.isAdmin,
+      },
+    },
+  });
+});
