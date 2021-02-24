@@ -20,16 +20,6 @@ const createSendToken = (user, statusCode, req, res) => {
   user.updatedAt = undefined;
   user.__v = undefined;
 
-  if (process.env.NODE_ENV === 'production') {
-    res.cookie('jwt', token, {
-      expires: new Date(
-        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-      ),
-      httpOnly: true,
-      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-    });
-  }
-
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -38,6 +28,7 @@ const createSendToken = (user, statusCode, req, res) => {
     },
   });
 };
+
 // @desc    Register a new user
 // @route   POST /api/v1/users
 // @access  Public
@@ -81,8 +72,6 @@ export const protect = asyncHandler(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.jwt) {
-    token = req.cookies.jwt;
   }
 
   if (!token) {

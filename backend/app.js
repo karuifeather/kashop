@@ -1,7 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
 
 import AppError from './utils/appError.js';
 import productRouter from './routes/productRoutes.js';
@@ -12,8 +11,6 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-// Cookie parser
-app.use(cookieParser());
 
 if (process.env.NODE_ENV === 'development') app.use(morgan('tiny'));
 
