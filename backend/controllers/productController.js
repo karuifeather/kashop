@@ -3,7 +3,7 @@ import AppError from '../utils/appError.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
 // @desc    Fetch all products
-// @route   /api/v1/products
+// @route   GET /api/v1/products
 // @access  Public
 export const getProducts = asyncHandler(async (req, res, next) => {
   const products = await Product.find({});
@@ -16,7 +16,7 @@ export const getProducts = asyncHandler(async (req, res, next) => {
 });
 
 // @desc    Fetch product by ID
-// @route   /api/v1/products/:id
+// @route   GET /api/v1/products/:id
 // @access  Public
 export const getProduct = asyncHandler(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
