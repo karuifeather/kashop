@@ -14,3 +14,7 @@ export const userLogin = axios.create({
 export const getProfile = axios.create({
   baseURL: '/api/v1/users',
 });
+
+export const orders = axios.create({
+  baseURL: '/api/v1/orders',
+});
