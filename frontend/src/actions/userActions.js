@@ -1,5 +1,8 @@
-import { userLogin } from '../api';
+import { getProfile, userLogin } from '../api';
 import {
+  USER_DETAILS_FAIL,
+  USER_DETAILS_REQ,
+  USER_DETAILS_SUCCESS,
   USER_LOGIN_FAIL,
   USER_LOGIN_REQ,
   USER_LOGIN_SUCCESS,
@@ -7,6 +10,10 @@ import {
   USER_REGISTER_FAIL,
   USER_REGISTER_REQ,
   USER_REGISTER_SUCCESS,
+  USER_UPDATE_FAIL,
+  USER_UPDATE_REQ,
+  USER_UPDATE_RESET,
+  USER_UPDATE_SUCCESS,
 } from './types';
 
 export const login = (email, password) => async (dispatch) => {
@@ -51,6 +58,59 @@ export const register = (name, email, password) => async (dispatch) => {
   } catch (e) {
     dispatch({
       type: USER_REGISTER_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
+export const getUserProfile = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_DETAILS_REQ });
+
+    const {
+      loggedinUser: { userToken },
+    } = getState();
+
+    const { data } = await getProfile.get(`/${id}`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+
+    dispatch({ type: USER_DETAILS_SUCCESS, payload: data.data.user });
+  } catch (e) {
+    dispatch({
+      type: USER_DETAILS_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
+export const updateUserProfile = (user) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_UPDATE_REQ });
+
+    const {
+      loggedinUser: { userToken },
+    } = getState();
+
+    const { data } = await getProfile.patch('profile', user, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    dispatch({ type: USER_UPDATE_SUCCESS, payload: data.data.user });
+  } catch (e) {
+    dispatch({
+      type: USER_UPDATE_FAIL,
       payload:
         e.response && e.response.data.message
           ? e.response.data.message

@@ -10,3 +10,7 @@ export const userLogin = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+export const getProfile = axios.create({
+  baseURL: '/api/v1/users',
+});
