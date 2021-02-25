@@ -10,10 +10,12 @@ import App from './App';
 import reducers from './reducers';
 
 const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+const shippingAddress =
+  JSON.parse(localStorage.getItem('shippingAddress')) || [];
 const userToken = JSON.parse(localStorage.getItem('userToken')) || null;
 const userInfo = JSON.parse(localStorage.getItem('userInfo')) || null;
 const initialState = {
-  cart: { cartItems },
+  cart: { cartItems, shippingAddress },
   loggedinUser: { userToken, userInfo },
 };
 
