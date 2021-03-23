@@ -37,7 +37,7 @@ const PlaceOrderScreen = ({ history }) => {
   }, [history, success]);
 
   if (!paymentMethod) {
-    paymentMethod = 'PayPal';
+    paymentMethod = 'Stripe';
   }
 
   const placeOrderHandler = () => {

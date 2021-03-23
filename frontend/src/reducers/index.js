@@ -8,7 +8,11 @@ import {
 } from './userReducer';
 import { cartReducer } from './cartReducer';
 import { productListReducer, productReducer } from './productReducer';
-import { createOrderReducer, orderDetailsReducer } from './orderReducer';
+import {
+  createOrderReducer,
+  orderDetailsReducer,
+  orderPayReducer,
+} from './orderReducer';
 
 export default combineReducers({
   products: productListReducer,
@@ -20,4 +24,5 @@ export default combineReducers({
   updatedUserProfile: userUpdateReducer,
   createdOrder: createOrderReducer,
   orderDetails: orderDetailsReducer,
+  orderPaidStatus: orderPayReducer,
 });

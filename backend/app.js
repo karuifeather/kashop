@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 
+import { webhookCheckout } from './controllers/orderController.js';
 import AppError from './utils/appError.js';
 import productRouter from './routes/productRoutes.js';
 import userRouter from './routes/userRoutes.js';
@@ -10,6 +11,12 @@ import globalErrorHandler from './controllers/errorHandler.js';
 
 dotenv.config();
 const app = express();
+
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  webhookCheckout
+);
 
 app.use(express.json());
 
