@@ -1,3 +1,5 @@
+import { Elements, ElementsConsumer } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, ListGroup, Row, Col, Image, Card } from 'react-bootstrap';
@@ -5,13 +7,14 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { getOrderDetails } from '../actions/orderActions';
+import { getOrderDetails, payOrderCheckout } from '../actions/orderActions';
 
-const OrderScreen = ({ match }) => {
+const OrderScreen = ({ match, stripe }) => {
   const orderId = match.params.id;
   const dispatch = useDispatch();
 
   const { loading, error, order } = useSelector((state) => state.orderDetails);
+  const { session } = useSelector((state) => state.orderPaidStatus);
 
   if (!loading) {
     order.itemsPrice = order.orderItems.reduce(
@@ -21,8 +24,16 @@ const OrderScreen = ({ match }) => {
   }
 
   useEffect(() => {
-    dispatch(getOrderDetails(orderId));
-  }, [dispatch, orderId]);
+    if (!order) {
+      dispatch(getOrderDetails(orderId));
+    }
+  }, [dispatch, orderId, order]);
+
+  const onPayClick = () => {
+    dispatch(payOrderCheckout(orderId));
+
+    stripe.redirectToCheckout({ sessionId: session.id });
+  };
 
   return loading ? (
     <Loader />
@@ -136,6 +147,21 @@ const OrderScreen = ({ match }) => {
                   <Col>${order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              <ListGroup.Item>
+                <Row>
+                  <Col>
+                    <Button
+                      className='btn-block'
+                      type='button'
+                      disabled={!stripe}
+                      onClick={onPayClick}
+                      variant='primary'
+                    >
+                      Pay now
+                    </Button>
+                  </Col>
+                </Row>
+              </ListGroup.Item>
             </ListGroup>
           </Card>
         </Col>
@@ -144,4 +170,24 @@ const OrderScreen = ({ match }) => {
   );
 };
 
-export default OrderScreen;
+const stripePromise = loadStripe(
+  'pk_test_51IM7NgEKp6LlVHgD0RCRi4BDPqBtRFRH73z4ETvDtFISXc7X0to0ukX8LkYVlYkrkSvMtiILZQTvsQRZOLJi9thB00kKshOOZz'
+);
+
+const InjectedCheckoutForm = ({ match }) => {
+  return (
+    <ElementsConsumer>
+      {({ elements, stripe }) => <OrderScreen match={match} stripe={stripe} />}
+    </ElementsConsumer>
+  );
+};
+
+const StripeWrapper = ({ match }) => {
+  return (
+    <Elements stripe={stripePromise}>
+      <InjectedCheckoutForm match={match} />
+    </Elements>
+  );
+};
+
+export default StripeWrapper;
