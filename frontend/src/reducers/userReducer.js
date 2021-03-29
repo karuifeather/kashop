@@ -22,7 +22,8 @@ export const userAuthReducer = (state = {}, action) => {
       return {
         ...state,
         loading: false,
-        userInfo: action.payload,
+        userToken: action.payload.token,
+        userInfo: action.payload.user,
         error: null,
       };
     case USER_LOGIN_FAIL:
@@ -42,7 +43,8 @@ export const userRegisterReducer = (state = {}, action) => {
       return {
         ...state,
         loading: false,
-        userInfo: action.payload,
+        userToken: action.payload.token,
+        userInfo: action.payload.user,
         error: null,
       };
     case USER_REGISTER_FAIL:

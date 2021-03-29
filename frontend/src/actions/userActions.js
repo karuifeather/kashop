@@ -21,7 +21,10 @@ export const login = (email, password) => async (dispatch) => {
 
     const { data } = await userLogin.post('/login', { email, password });
 
-    dispatch({ type: USER_LOGIN_SUCCESS, payload: data.data.user });
+    dispatch({
+      type: USER_LOGIN_SUCCESS,
+      payload: { user: data.data.user, token: data.token },
+    });
 
     localStorage.setItem('userToken', JSON.stringify(data.token));
     localStorage.setItem('userInfo', JSON.stringify(data.data.user));
@@ -49,8 +52,14 @@ export const register = (name, email, password) => async (dispatch) => {
 
     const { data } = await userLogin.post('', { name, email, password });
 
-    dispatch({ type: USER_REGISTER_SUCCESS, payload: data.data.user });
-    dispatch({ type: USER_LOGIN_SUCCESS, payload: data.data.user });
+    dispatch({
+      type: USER_REGISTER_SUCCESS,
+      payload: { user: data.data.user, token: data.token },
+    });
+    dispatch({
+      type: USER_LOGIN_SUCCESS,
+      payload: { user: data.data.user, token: data.token },
+    });
 
     localStorage.setItem('userToken', JSON.stringify(data.token));
     localStorage.setItem('userInfo', JSON.stringify(data.data.user));
