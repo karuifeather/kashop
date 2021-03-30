@@ -1,5 +1,6 @@
 import { Elements, ElementsConsumer } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import axios from 'axios';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, ListGroup, Row, Col, Image, Card } from 'react-bootstrap';
@@ -7,16 +8,20 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { getOrderDetails, payOrderCheckout } from '../actions/orderActions';
+import { getOrderDetails } from '../actions/orderActions';
 
-const OrderScreen = ({ match, stripe }) => {
+const OrderScreen = ({ match, stripe, location, history }) => {
   const orderId = match.params.id;
   const dispatch = useDispatch();
 
-  const { loading, error, order } = useSelector((state) => state.orderDetails);
-  const { session } = useSelector((state) => state.orderPaidStatus);
+  const paid = location.search.split('=')[1];
 
-  if (!loading) {
+  // There is a bug! You won't be taken to newly created order
+  // if there already is an order in orderDetails;
+  // Hence this round tour; TODO: FIX THE BUG APPROPRIATELY
+  let { loading, error, order } = useSelector((state) => state.orderDetails);
+
+  if (!loading && !error) {
     order.itemsPrice = order.orderItems.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
@@ -27,18 +32,29 @@ const OrderScreen = ({ match, stripe }) => {
     if (!order) {
       dispatch(getOrderDetails(orderId));
     }
-  }, [dispatch, orderId, order]);
+
+    if (Boolean(paid)) {
+      axios.get(`/api/v1/orders/pay/${orderId}`);
+
+      dispatch(getOrderDetails(orderId));
+      history.push(`/order/${orderId}`);
+    }
+  }, [dispatch, orderId, paid]);
 
   const onPayClick = () => {
-    dispatch(payOrderCheckout(orderId));
+    async function createCheckout() {
+      const { data } = await axios.get(`/api/v1/orders/checkout/${orderId}`);
 
-    stripe.redirectToCheckout({ sessionId: session.id });
+      stripe.redirectToCheckout({ sessionId: data.session.id });
+    }
+
+    createCheckout();
   };
 
   return loading ? (
     <Loader />
   ) : error ? (
-    <Message>{error}</Message>
+    <Message variant='danger'>{error}</Message>
   ) : (
     <>
       <h1>Order {order._id}</h1>
@@ -75,7 +91,7 @@ const OrderScreen = ({ match, stripe }) => {
                 {order.paymentMethod}
               </p>
               {order.isPaid ? (
-                <Message variant='success'>Paid on{order.paidAt}</Message>
+                <Message variant='success'>Paid on {order.paidAt}</Message>
               ) : (
                 <Message variant='danger'>Not paid</Message>
               )}
@@ -153,7 +169,7 @@ const OrderScreen = ({ match, stripe }) => {
                     <Button
                       className='btn-block'
                       type='button'
-                      disabled={!stripe}
+                      disabled={order.isPaid || !stripe}
                       onClick={onPayClick}
                       variant='primary'
                     >
@@ -174,18 +190,29 @@ const stripePromise = loadStripe(
   'pk_test_51IM7NgEKp6LlVHgD0RCRi4BDPqBtRFRH73z4ETvDtFISXc7X0to0ukX8LkYVlYkrkSvMtiILZQTvsQRZOLJi9thB00kKshOOZz'
 );
 
-const InjectedCheckoutForm = ({ match }) => {
+const InjectedCheckoutForm = ({ match, location, history }) => {
   return (
     <ElementsConsumer>
-      {({ elements, stripe }) => <OrderScreen match={match} stripe={stripe} />}
+      {({ elements, stripe }) => (
+        <OrderScreen
+          match={match}
+          stripe={stripe}
+          location={location}
+          history={history}
+        />
+      )}
     </ElementsConsumer>
   );
 };
 
-const StripeWrapper = ({ match }) => {
+const StripeWrapper = ({ match, location, history }) => {
   return (
     <Elements stripe={stripePromise}>
-      <InjectedCheckoutForm match={match} />
+      <InjectedCheckoutForm
+        match={match}
+        location={location}
+        history={history}
+      />
     </Elements>
   );
 };
