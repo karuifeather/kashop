@@ -24,8 +24,11 @@ const PlaceOrderScreen = ({ history }) => {
 
   cart.taxPrice = (0.15 * cart.itemsPrice).toFixed(2);
 
-  cart.totalPrice =
-    cart.itemsPrice * 1 + cart.shippingPrice * 1 + cart.taxPrice * 1;
+  cart.totalPrice = (
+    cart.itemsPrice * 1 +
+    cart.shippingPrice * 1 +
+    cart.taxPrice * 1
+  ).toFixed(2);
 
   const { success, error, order } = useSelector((state) => state.createdOrder);
 
