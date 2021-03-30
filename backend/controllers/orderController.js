@@ -6,64 +6,6 @@ import asyncHandler from '../utils/asyncHandler.js';
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET);
 
-/**
- * {
-[0]   shippingAddress: {
-[0]     address: 'Manakamana Margh',
-[0]     city: 'Kathmandu',
-[0]     postalCode: '44600',
-[0]     country: 'Nepal'
-[0]   },
-[0]   taxPrice: 632.97,
-[0]   shippingPrice: 0,
-[0]   totalPrice: 4852.79,
-[0]   isPaid: false,
-[0]   isDelivered: false,
-[0]   _id: 6061dafee77dc4357814d734,
-[0]   orderItems: [
-[0]     {
-[0]       _id: 6061dafee77dc4357814d735,
-[0]       product: 60339c4207c52e2a70397f6d,
-[0]       name: 'iPhone 11 Pro 256GB Memory',
-[0]       image: '/images/phone.jpg',
-[0]       price: 599.99,
-[0]       quantity: 4
-[0]     },
-[0]     {
-[0]       _id: 6061dafee77dc4357814d736,
-[0]       product: 60339c4207c52e2a70397f70,
-[0]       name: 'Logitech G-Series Gaming Mouse',
-[0]       image: '/images/mouse.jpg',
-[0]       price: 49.99,
-[0]       quantity: 7
-[0]     },
-[0]     {
-[0]       _id: 6061dafee77dc4357814d737,
-[0]       product: 60339c4207c52e2a70397f6c,
-[0]       name: 'Airpods Wireless Bluetooth Headphones',
-[0]       image: '/images/airpods.jpg',
-[0]       price: 89.99,
-[0]       quantity: 6
-[0]     },
-[0]     {
-[0]       _id: 6061dafee77dc4357814d738,
-[0]       product: 60339c4207c52e2a70397f6e,
-[0]       name: 'Cannon EOS 80D DSLR Camera',
-[0]       image: '/images/camera.jpg',
-[0]       price: 929.99,
-[0]       quantity: 1
-[0]     }
-[0]   ],
-[0]   paymentMethod: 'Stripe',
-[0]   user: 6061ae2b2f4f01194c5a2b2a,
-[0]   createdAt: 2021-03-29T13:49:50.628Z,
-[0]   updatedAt: 2021-03-29T13:49:50.628Z,
-[0]   __v: 0
-[0] }
- */
-
-/**You did not provide an API key. You need to provide your API key in the Authorization header, using Bearer auth (e.g. 'Authorization: Bearer YOUR_SECRET_KEY'). See https://stripe.com/docs/api#authentication for details, or we can help at https://support.stripe.com/. */
-
 // @desc    Create new order
 // @route   GET /api/v1/orders/checkout/:orderID
 // @access  Public
@@ -71,9 +13,6 @@ export const getCheckoutSession = asyncHandler(async (req, res, next) => {
   // 1. Get the tour
   const { orderId } = req.params;
   const order = await Order.findById(orderId).populate('user', 'email');
-  console.log(order);
-
-  // order.orderItems.forEach()
 
   // 2. Create checkout session
   const session = await stripe.checkout.sessions.create({
@@ -94,8 +33,6 @@ export const getCheckoutSession = asyncHandler(async (req, res, next) => {
       },
     ],
   });
-
-  console.log(session);
 
   // 3. Create chekout session as response
   res.status(200).json({
@@ -169,20 +106,27 @@ const updateOrderToPaid = async (sessionData) => {
 
   order.isPaid = true;
   order.paidAt = Date.now() - 2000;
-  order.paymentResult = {
-    id: sessionData.client_reference_id,
-    status: sessionData.client_reference_id,
-    update_time: sessionData.update_time,
-    email_address: sessionData.customer_details.email,
-  };
 
   return await order.save();
-
-  // res.status(202).json({
-  //   status: 'success',
-  //   data: { order: updatedOrder },
-  // });
 };
+
+// Use in development only
+export const updateOrderToPaidTest = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.orderId);
+
+  if (!order) {
+    return next(new AppError('Order not found.', 404));
+  }
+
+  order.isPaid = true;
+  order.paidAt = Date.now() - 2000;
+  const updatedOrder = await order.save();
+
+  res.status(200).json({
+    status: 'success',
+    data: { order: updatedOrder },
+  });
+});
 
 // @desc    Update order to paid
 // @route   POST {ROOT}/webhook-checkout

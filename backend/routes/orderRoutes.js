@@ -5,6 +5,7 @@ import {
   addOrderItems,
   getOrder,
   getCheckoutSession,
+  updateOrderToPaidTest,
 } from '../controllers/orderController.js';
 
 const router = express.Router();
@@ -12,5 +13,8 @@ const router = express.Router();
 router.post('/', protect, addOrderItems);
 router.get('/:id', protect, getOrder);
 router.get('/checkout/:orderId', getCheckoutSession);
+
+// FOR TESTing only!! DISABLE THIS ROUTE IN PRODUCTION!!
+router.get('/pay/:orderId', updateOrderToPaidTest);
 
 export default router;

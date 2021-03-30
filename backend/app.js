@@ -22,11 +22,6 @@ app.use(express.json());
 
 if (process.env.NODE_ENV === 'development') app.use(morgan('tiny'));
 
-app.all('*', (req, res, next) => {
-  console.log(req.headers);
-  next();
-});
-
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/orders', orderRouter);
