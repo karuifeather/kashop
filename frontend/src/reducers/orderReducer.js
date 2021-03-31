@@ -5,6 +5,9 @@ import {
   ORDER_DETAILS_FAIL,
   ORDER_DETAILS_REQ,
   ORDER_DETAILS_SUCCESS,
+  ORDER_MY_LIST_FAIL,
+  ORDER_MY_LIST_REQ,
+  ORDER_MY_LIST_SUCCESS,
 } from '../actions/types';
 
 export const createOrderReducer = (state = {}, action) => {
@@ -15,7 +18,6 @@ export const createOrderReducer = (state = {}, action) => {
       return {
         loading: false,
         error: false,
-        success: true,
         order: action.payload,
       };
     case ORDER_CREATE_FAIL:
@@ -39,6 +41,26 @@ export const orderDetailsReducer = (
         order: action.payload,
       };
     case ORDER_DETAILS_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const ordersMyListReducer = (
+  state = { loading: true, orders: [] },
+  action
+) => {
+  switch (action.type) {
+    case ORDER_MY_LIST_REQ:
+      return { loading: true, error: false };
+    case ORDER_MY_LIST_SUCCESS:
+      return {
+        loading: false,
+        error: false,
+        orders: action.payload,
+      };
+    case ORDER_MY_LIST_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

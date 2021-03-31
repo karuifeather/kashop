@@ -5,6 +5,9 @@ import {
   ORDER_DETAILS_SUCCESS,
   ORDER_DETAILS_REQ,
   ORDER_DETAILS_FAIL,
+  ORDER_MY_LIST_REQ,
+  ORDER_MY_LIST_SUCCESS,
+  ORDER_MY_LIST_FAIL,
 } from './types';
 import { orders } from '../api';
 
@@ -53,6 +56,32 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
   } catch (e) {
     dispatch({
       type: ORDER_DETAILS_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
+export const getMyOrders = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ORDER_MY_LIST_REQ });
+
+    const {
+      loggedinUser: { userToken },
+    } = getState();
+
+    const { data } = await orders.get('/myorders', {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+
+    dispatch({ type: ORDER_MY_LIST_SUCCESS, payload: data.data.orders });
+  } catch (e) {
+    dispatch({
+      type: ORDER_MY_LIST_FAIL,
       payload:
         e.response && e.response.data.message
           ? e.response.data.message
