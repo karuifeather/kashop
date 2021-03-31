@@ -24,5 +24,4 @@ export default combineReducers({
   updatedUserProfile: userUpdateReducer,
   createdOrder: createOrderReducer,
   orderDetails: orderDetailsReducer,
-  orderPaidStatus: orderPayReducer,
 });

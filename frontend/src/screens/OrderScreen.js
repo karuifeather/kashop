@@ -30,6 +30,8 @@ const OrderScreen = ({ match, stripe, location, history }) => {
       dispatch(getOrderDetails(orderId));
     }
 
+    // TODO: Remove this logic in production
+    // no need to do it manually: stripe does it for us
     if (Boolean(paid)) {
       axios.get(`/api/v1/orders/pay/${orderId}`);
 
