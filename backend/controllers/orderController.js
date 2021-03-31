@@ -78,8 +78,8 @@ export const addOrderItems = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    get order by ID
-// @route   POST /api/v1/orders/:id
+// @desc    Get order by ID
+// @route   GET /api/v1/orders/:id
 // @access  Private
 export const getOrder = asyncHandler(async (req, res, next) => {
   const order = await Order.findById(req.params.id).populate(
@@ -156,3 +156,15 @@ export const webhookCheckout = (req, res, next) => {
 
   res.status(200).json({ received: true });
 };
+
+// @desc    Get logged-in user orders
+// @route   GET /api/v1/orders/myorders
+// @access  Private
+export const getOrders = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find({ user: req.user._id });
+
+  res.status(200).json({
+    status: 'success',
+    data: { orders },
+  });
+});

@@ -6,11 +6,13 @@ import {
   getOrder,
   getCheckoutSession,
   updateOrderToPaidTest,
+  getOrders,
 } from '../controllers/orderController.js';
 
 const router = express.Router();
 
 router.post('/', protect, addOrderItems);
+router.get('/myorders', protect, getOrders);
 router.get('/:id', protect, getOrder);
 router.get('/checkout/:orderId', getCheckoutSession);
 
