@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import Message from '../components/Message';
 import CheckoutSteps from '../components/CheckoutSteps';
-import { createOrder } from '../actions/orderActions';
+import { createOrder, getOrderDetails } from '../actions/orderActions';
 
 const PlaceOrderScreen = ({ history }) => {
   const dispatch = useDispatch();
@@ -34,6 +34,7 @@ const PlaceOrderScreen = ({ history }) => {
 
   useEffect(() => {
     if (success) {
+      dispatch(getOrderDetails(order._id));
       history.push(`/order/${order._id}`);
     }
     // eslint-disable-next-line

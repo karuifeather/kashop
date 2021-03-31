@@ -16,10 +16,7 @@ const OrderScreen = ({ match, stripe, location, history }) => {
 
   const paid = location.search.split('=')[1];
 
-  // There is a bug! You won't be taken to newly created order
-  // if there already is an order in orderDetails;
-  // Hence this round tour; TODO: FIX THE BUG APPROPRIATELY
-  let { loading, error, order } = useSelector((state) => state.orderDetails);
+  const { loading, error, order } = useSelector((state) => state.orderDetails);
 
   if (!loading && !error) {
     order.itemsPrice = order.orderItems.reduce(
@@ -39,6 +36,7 @@ const OrderScreen = ({ match, stripe, location, history }) => {
       dispatch(getOrderDetails(orderId));
       history.push(`/order/${orderId}`);
     }
+    // eslint-disable-next-line
   }, [dispatch, orderId, paid]);
 
   const onPayClick = () => {
