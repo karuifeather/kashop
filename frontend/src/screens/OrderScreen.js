@@ -26,9 +26,7 @@ const OrderScreen = ({ match, stripe, location, history }) => {
   }
 
   useEffect(() => {
-    if (!order) {
-      dispatch(getOrderDetails(orderId));
-    }
+    dispatch(getOrderDetails(orderId));
 
     // TODO: Remove this logic in production
     // no need to do it manually: stripe does it for us
