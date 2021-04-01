@@ -5,9 +5,11 @@ import {
   ORDER_DETAILS_FAIL,
   ORDER_DETAILS_REQ,
   ORDER_DETAILS_SUCCESS,
+  ORDER_DETAILS_RESET,
   ORDER_MY_LIST_FAIL,
   ORDER_MY_LIST_REQ,
   ORDER_MY_LIST_SUCCESS,
+  ORDER_MY_LIST_RESET,
 } from '../actions/types';
 
 export const createOrderReducer = (state = {}, action) => {
@@ -18,6 +20,7 @@ export const createOrderReducer = (state = {}, action) => {
       return {
         loading: false,
         error: false,
+        success: true,
         order: action.payload,
       };
     case ORDER_CREATE_FAIL:
@@ -34,6 +37,8 @@ export const orderDetailsReducer = (
   switch (action.type) {
     case ORDER_DETAILS_REQ:
       return { ...state, loading: true, error: false };
+    case ORDER_DETAILS_RESET:
+      return { loading: true, orderItems: [], shippingAddress: {} };
     case ORDER_DETAILS_SUCCESS:
       return {
         loading: false,
@@ -54,6 +59,8 @@ export const ordersMyListReducer = (
   switch (action.type) {
     case ORDER_MY_LIST_REQ:
       return { loading: true, error: false };
+    case ORDER_MY_LIST_RESET:
+      return { loading: true, orders: [] };
     case ORDER_MY_LIST_SUCCESS:
       return {
         loading: false,

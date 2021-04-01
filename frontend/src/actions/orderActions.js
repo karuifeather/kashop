@@ -5,9 +5,11 @@ import {
   ORDER_DETAILS_SUCCESS,
   ORDER_DETAILS_REQ,
   ORDER_DETAILS_FAIL,
+  ORDER_DETAILS_RESET,
   ORDER_MY_LIST_REQ,
   ORDER_MY_LIST_SUCCESS,
   ORDER_MY_LIST_FAIL,
+  ORDER_MY_LIST_RESET,
 } from './types';
 import { orders } from '../api';
 
@@ -88,4 +90,16 @@ export const getMyOrders = () => async (dispatch, getState) => {
           : e.message,
     });
   }
+};
+
+export const myOrdersReset = () => {
+  return {
+    type: ORDER_MY_LIST_RESET,
+  };
+};
+
+export const orderDetailsReset = () => {
+  return {
+    type: ORDER_DETAILS_RESET,
+  };
 };

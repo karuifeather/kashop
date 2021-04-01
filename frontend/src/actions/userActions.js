@@ -2,6 +2,7 @@ import { getProfile, userLogin } from '../api';
 import {
   USER_DETAILS_FAIL,
   USER_DETAILS_REQ,
+  USER_DETAILS_RESET,
   USER_DETAILS_SUCCESS,
   USER_LOGIN_FAIL,
   USER_LOGIN_REQ,
@@ -125,4 +126,10 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
           : e.message,
     });
   }
+};
+
+export const userDetailsReset = () => {
+  return {
+    type: USER_DETAILS_RESET,
+  };
 };
