@@ -89,7 +89,7 @@ const ProfileScreen = ({ location, history }) => {
         ) : errorOrders ? (
           <Message variant='danger'>{errorOrders}</Message>
         ) : (
-          <Table stripped='true' bordered hover responsive className='table-sm'>
+          <Table striped bordered hover responsive className='table-sm'>
             <thead>
               <tr>
                 <th>ID</th>
@@ -103,7 +103,7 @@ const ProfileScreen = ({ location, history }) => {
             <tbody>
               {orders.map((order) => {
                 return (
-                  <tr key={order.id}>
+                  <tr key={order._id}>
                     <td>{order._id}</td>
                     <td>{order.createdAt.substring(0, 10)}</td>
                     <td>{order.totalPrice}</td>

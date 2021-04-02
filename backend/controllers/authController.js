@@ -93,3 +93,8 @@ export const protect = asyncHandler(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+export const restrictToAdmin = asyncHandler(async (req, res, next) => {
+  if (req.user.isAdmin) return next();
+  throw new AppError('You are not authorized to use this route.', 401);
+});

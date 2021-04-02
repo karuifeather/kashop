@@ -49,3 +49,17 @@ export const updateMe = asyncHandler(async (req, res, next) => {
     },
   });
 });
+
+// @desc    Get all users
+// @route   GET /api/v1/users
+// @access  Private/Admin
+export const getAllUsers = asyncHandler(async (req, res, next) => {
+  const users = await User.find({});
+
+  return res.status(200).json({
+    status: 'success',
+    data: {
+      users,
+    },
+  });
+});

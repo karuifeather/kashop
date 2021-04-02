@@ -3,6 +3,10 @@ import {
   USER_DETAILS_REQ,
   USER_DETAILS_RESET,
   USER_DETAILS_SUCCESS,
+  USER_LIST_FAIL,
+  USER_LIST_REQ,
+  USER_LIST_RESET,
+  USER_LIST_SUCCESS,
   USER_LOGIN_FAIL,
   USER_LOGIN_REQ,
   USER_LOGIN_SUCCESS,
@@ -49,6 +53,26 @@ export const userRegisterReducer = (state = {}, action) => {
         error: null,
       };
     case USER_REGISTER_FAIL:
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userListReducer = (state = { users: [] }, action) => {
+  switch (action.type) {
+    case USER_LIST_REQ:
+      return { ...state, loading: true, error: null };
+    case USER_LIST_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        users: action.payload,
+        error: null,
+      };
+    case USER_LIST_RESET:
+      return { users: [] };
+    case USER_LIST_FAIL:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;

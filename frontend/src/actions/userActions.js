@@ -4,6 +4,10 @@ import {
   USER_DETAILS_REQ,
   USER_DETAILS_RESET,
   USER_DETAILS_SUCCESS,
+  USER_LIST_FAIL,
+  USER_LIST_REQ,
+  USER_LIST_RESET,
+  USER_LIST_SUCCESS,
   USER_LOGIN_FAIL,
   USER_LOGIN_REQ,
   USER_LOGIN_SUCCESS,
@@ -45,6 +49,7 @@ export const logout = () => async (dispatch) => {
   localStorage.removeItem('userInfo');
 
   dispatch({ type: USER_LOGOUT });
+  dispatch({ type: USER_LIST_RESET });
 };
 
 export const register = (name, email, password) => async (dispatch) => {
@@ -120,6 +125,32 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
   } catch (e) {
     dispatch({
       type: USER_UPDATE_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
+export const getUsersProfile = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_LIST_REQ });
+
+    const {
+      loggedinUser: { userToken },
+    } = getState();
+
+    const { data } = await getProfile.get('', {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+
+    dispatch({ type: USER_LIST_SUCCESS, payload: data.data.users });
+  } catch (e) {
+    dispatch({
+      type: USER_LIST_FAIL,
       payload:
         e.response && e.response.data.message
           ? e.response.data.message
