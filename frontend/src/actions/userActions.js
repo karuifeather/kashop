@@ -1,5 +1,8 @@
 import { getProfile, userLogin } from '../api';
 import {
+  USER_DELETE_FAIL,
+  USER_DELETE_REQ,
+  USER_DELETE_SUCCESS,
   USER_DETAILS_FAIL,
   USER_DETAILS_REQ,
   USER_DETAILS_RESET,
@@ -151,6 +154,32 @@ export const getUsersProfile = () => async (dispatch, getState) => {
   } catch (e) {
     dispatch({
       type: USER_LIST_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
+export const deleteUser = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_DELETE_REQ });
+
+    const {
+      loggedinUser: { userToken },
+    } = getState();
+
+    const { data } = await getProfile.delete(`/${id}`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+
+    dispatch({ type: USER_DELETE_SUCCESS, payload: data.data });
+  } catch (e) {
+    dispatch({
+      type: USER_DELETE_FAIL,
       payload:
         e.response && e.response.data.message
           ? e.response.data.message
