@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { getUserProfile } from '../actions/userActions';
+import { getUserProfile, updateUser } from '../actions/userActions';
+import { USER_UPDATE_BY_ADMIN_RESET } from '../actions/types';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
@@ -17,19 +18,31 @@ const UserEditScreen = ({ match, history }) => {
   const dispatch = useDispatch();
 
   const { loading, user, error } = useSelector((state) => state.userDetails);
+  const {
+    loading: updateLoading,
+    success: successUpdate,
+    error: updateError,
+  } = useSelector((state) => state.userUpdateByAdmin);
 
   useEffect(() => {
-    if (!user.name || user._id !== userId) {
-      dispatch(getUserProfile(userId));
+    if (successUpdate) {
+      dispatch({ type: USER_UPDATE_BY_ADMIN_RESET });
+      history.push('/admin/userlist');
     } else {
-      setName(user.name);
-      setEmail(user.email);
-      setIsAdmin(user.isAdmin);
+      if (!user.name || user._id !== userId) {
+        dispatch(getUserProfile(userId));
+      } else {
+        setName(user.name);
+        setEmail(user.email);
+        setIsAdmin(user.isAdmin);
+      }
     }
-  }, [user, dispatch, userId]);
+  }, [user, dispatch, userId, successUpdate, history]);
 
   const onFormSubmit = (e) => {
     e.preventDefault();
+
+    dispatch(updateUser({ ...user, name, email, isAdmin }));
   };
 
   return (
@@ -39,6 +52,8 @@ const UserEditScreen = ({ match, history }) => {
       </Link>
       <FormContainer>
         <h1>Update User Info</h1>
+        {updateLoading && <Loader />}
+        {updateError && <Message variant='danger'>{updateError}</Message>}
         {loading ? (
           <Loader />
         ) : error ? (
@@ -73,7 +88,6 @@ const UserEditScreen = ({ match, history }) => {
                 label='Admin or not'
                 checked={isAdmin}
                 onChange={(e) => setIsAdmin(e.target.checked)}
-                required
               ></Form.Check>
             </Form.Group>
 

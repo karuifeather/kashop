@@ -17,6 +17,10 @@ import {
   USER_REGISTER_FAIL,
   USER_REGISTER_REQ,
   USER_REGISTER_SUCCESS,
+  USER_UPDATE_BY_ADMIN_FAIL,
+  USER_UPDATE_BY_ADMIN_REQ,
+  USER_UPDATE_BY_ADMIN_RESET,
+  USER_UPDATE_BY_ADMIN_SUCCESS,
   USER_UPDATE_FAIL,
   USER_UPDATE_REQ,
   USER_UPDATE_SUCCESS,
@@ -74,6 +78,26 @@ export const userDeleteReducer = (state = {}, action) => {
         error: null,
       };
     case USER_DELETE_FAIL:
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userUpdateByAdminReducer = (state = { user: {} }, action) => {
+  switch (action.type) {
+    case USER_UPDATE_BY_ADMIN_REQ:
+      return { ...state, loading: true, error: null };
+    case USER_UPDATE_BY_ADMIN_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        success: true,
+        error: null,
+      };
+    case USER_UPDATE_BY_ADMIN_RESET:
+      return { user: {} };
+    case USER_UPDATE_BY_ADMIN_FAIL:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;

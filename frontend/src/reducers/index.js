@@ -7,6 +7,7 @@ import {
   userUpdateReducer,
   userListReducer,
   userDeleteReducer,
+  userUpdateByAdminReducer,
 } from './userReducer';
 import { cartReducer } from './cartReducer';
 import { productListReducer, productReducer } from './productReducer';
@@ -25,6 +26,7 @@ export default combineReducers({
   userDetails: userDetailsReducer,
   usersList: userListReducer,
   userDelete: userDeleteReducer,
+  userUpdateByAdmin: userUpdateByAdminReducer,
   updatedUserProfile: userUpdateReducer,
   createdOrder: createOrderReducer,
   orderDetails: orderDetailsReducer,

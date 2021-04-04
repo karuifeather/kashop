@@ -18,6 +18,9 @@ import {
   USER_REGISTER_FAIL,
   USER_REGISTER_REQ,
   USER_REGISTER_SUCCESS,
+  USER_UPDATE_BY_ADMIN_FAIL,
+  USER_UPDATE_BY_ADMIN_REQ,
+  USER_UPDATE_BY_ADMIN_SUCCESS,
   USER_UPDATE_FAIL,
   USER_UPDATE_REQ,
   USER_UPDATE_SUCCESS,
@@ -180,6 +183,34 @@ export const deleteUser = (id) => async (dispatch, getState) => {
   } catch (e) {
     dispatch({
       type: USER_DELETE_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
+export const updateUser = (user) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_UPDATE_BY_ADMIN_REQ });
+
+    const {
+      loggedinUser: { userToken },
+    } = getState();
+
+    const { data } = await getProfile.patch(`/${user._id}`, user, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    dispatch({ type: USER_UPDATE_BY_ADMIN_SUCCESS });
+    dispatch({ type: USER_DETAILS_SUCCESS, payload: data.data });
+  } catch (e) {
+    dispatch({
+      type: USER_UPDATE_BY_ADMIN_FAIL,
       payload:
         e.response && e.response.data.message
           ? e.response.data.message
