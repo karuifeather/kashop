@@ -45,3 +45,45 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
 
   res.status(204).send();
 });
+
+// @desc    Create product
+// @route   POST /api/v1/products
+// @access  Public/Admin
+export const createProduct = asyncHandler(async (req, res, next) => {
+  let product = new Product({
+    name: 'Sample Name',
+    price: 0,
+    user: req.user._id,
+    image: '/images/sample.jpg',
+    brand: 'Sample Brand',
+    category: 'Sample Category',
+    countInStock: 0,
+    numReviews: 0,
+    description: 'Sample Desrcription',
+  });
+
+  product = await product.save();
+
+  res.status(201).json({
+    status: 'success',
+    data: { product },
+  });
+});
+
+// @desc    Update product by ID
+// @route   PATCH /api/v1/products/:id
+// @access  Public/Admin
+export const updateProduct = asyncHandler(async (req, res, next) => {
+  const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+
+  if (!product) {
+    return next(new AppError('No product with that ID can be found.', 404));
+  }
+
+  res.status(202).json({
+    status: 'success',
+    data: { product },
+  });
+});
