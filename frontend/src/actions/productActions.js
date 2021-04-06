@@ -6,6 +6,9 @@ import {
   PRODUCT_LIST_REQ,
   PRODUCT_LIST_FAIL,
   PRODUCT_LIST_SUCCESS,
+  PRODUCT_DELETE_REQ,
+  PRODUCT_DELETE_SUCCESS,
+  PRODUCT_DELETE_FAIL,
 } from '../actions/types';
 
 export const getProducts = () => async (dispatch) => {
@@ -36,6 +39,32 @@ export const getProduct = (id) => async (dispatch) => {
   } catch (e) {
     dispatch({
       type: PRODUCT_DETAILS_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
+export const deleteProduct = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PRODUCT_DELETE_REQ });
+
+    const {
+      loggedinUser: { userToken },
+    } = getState();
+
+    await products.delete(`/${id}`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+
+    dispatch({ type: PRODUCT_DELETE_SUCCESS });
+  } catch (e) {
+    dispatch({
+      type: PRODUCT_DELETE_FAIL,
       payload:
         e.response && e.response.data.message
           ? e.response.data.message
