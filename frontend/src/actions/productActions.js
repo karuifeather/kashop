@@ -12,6 +12,9 @@ import {
   PRODUCT_CREATE_REQ,
   PRODUCT_CREATE_SUCCESS,
   PRODUCT_CREATE_FAIL,
+  PRODUCT_UPDATE_REQ,
+  PRODUCT_UPDATE_SUCCESS,
+  PRODUCT_UPDATE_FAIL,
 } from '../actions/types';
 
 export const getProducts = () => async (dispatch) => {
@@ -98,6 +101,33 @@ export const createProduct = () => async (dispatch, getState) => {
   } catch (e) {
     dispatch({
       type: PRODUCT_CREATE_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
+export const updateProduct = (newProduct) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PRODUCT_UPDATE_REQ });
+
+    const {
+      loggedinUser: { userToken },
+    } = getState();
+
+    await products.patch(`${newProduct._id}`, newProduct, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    dispatch({ type: PRODUCT_UPDATE_SUCCESS });
+  } catch (e) {
+    dispatch({
+      type: PRODUCT_UPDATE_FAIL,
       payload:
         e.response && e.response.data.message
           ? e.response.data.message

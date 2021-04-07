@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { getProduct } from '../actions/productActions';
-import { USER_UPDATE_BY_ADMIN_RESET } from '../actions/types';
+import { getProduct, updateProduct } from '../actions/productActions';
+import { PRODUCT_UPDATE_RESET } from '../actions/types';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
@@ -25,30 +25,47 @@ const ProductEditScreen = ({ match, history }) => {
   const { loading, item: product, error } = useSelector(
     (state) => state.currentProduct
   );
-  // const {
-  //   loading: updateLoading,
-  //   success: successUpdate,
-  //   error: updateError,
-  // } = useSelector((state) => state.userUpdateByAdmin);
+
+  const {
+    loading: updateLoading,
+    success: successUpdate,
+    error: updateError,
+  } = useSelector((state) => state.updateProduct);
 
   useEffect(() => {
-    if (!product.name || product._id !== productId) {
-      dispatch(getProduct(productId));
+    if (successUpdate) {
+      dispatch({ type: PRODUCT_UPDATE_RESET });
+      history.push('/admin/productlist');
     } else {
-      setName(product.name);
-      setPrice(product.price);
-      setImage(product.image);
-      setBrand(product.brand);
-      setCategory(product.category);
-      setCountInStock(product.countInStock);
-      setDescription(product.description);
+      if (!product.name || product._id !== productId) {
+        dispatch(getProduct(productId));
+      } else {
+        setName(product.name);
+        setPrice(product.price);
+        setImage(product.image);
+        setBrand(product.brand);
+        setCategory(product.category);
+        setCountInStock(product.countInStock);
+        setDescription(product.description);
+      }
     }
-  }, [product, dispatch, productId, history]);
+  }, [product, dispatch, productId, history, successUpdate]);
 
   const onFormSubmit = (e) => {
     e.preventDefault();
 
-    // dispatch(updateUser({ ...user, name, email, isAdmin }));
+    dispatch(
+      updateProduct({
+        ...product,
+        name,
+        price,
+        image,
+        brand,
+        category,
+        countInStock,
+        description,
+      })
+    );
   };
 
   return (
@@ -58,8 +75,8 @@ const ProductEditScreen = ({ match, history }) => {
       </Link>
       <FormContainer>
         <h1>Update Product Info</h1>
-        {/* {updateLoading && <Loader />}
-        {updateError && <Message variant='danger'>{updateError}</Message>} */}
+        {updateLoading && <Loader />}
+        {updateError && <Message variant='danger'>{updateError}</Message>}
         {loading ? (
           <Loader />
         ) : error ? (

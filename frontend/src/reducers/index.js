@@ -17,6 +17,7 @@ import {
   productDeleteReducer,
   productListReducer,
   productReducer,
+  productUpdateReducer,
 } from './productReducer';
 
 import {
@@ -30,6 +31,7 @@ export default combineReducers({
   currentProduct: productReducer,
   deleteProduct: productDeleteReducer,
   createProduct: productCreateReducer,
+  updateProduct: productUpdateReducer,
   cart: cartReducer,
   loggedinUser: userAuthReducer,
   newUser: userRegisterReducer,
