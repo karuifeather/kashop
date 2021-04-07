@@ -57,7 +57,7 @@ const UserEditScreen = ({ match, history }) => {
         {loading ? (
           <Loader />
         ) : error ? (
-          <Message variant='dabger'>{error}</Message>
+          <Message variant='danger'>{error}</Message>
         ) : (
           <Form onSubmit={onFormSubmit}>
             <Form.Group controlId='name'>
