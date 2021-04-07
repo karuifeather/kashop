@@ -3,7 +3,12 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { Button, Table, Row, Col } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { getProducts, deleteProduct } from '../actions/productActions';
+import {
+  getProducts,
+  deleteProduct,
+  createProduct,
+} from '../actions/productActions';
+import { PRODUCT_CREATE_RESET } from '../actions/types';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 
@@ -16,12 +21,31 @@ const ProductListScreen = ({ history, match }) => {
     error: deleteError,
   } = useSelector((state) => state.deleteProduct);
   const { list, loading, error } = useSelector((state) => state.products);
+  const {
+    product: createdProduct,
+    loading: createLoading,
+    success: createSuccess,
+    error: createError,
+  } = useSelector((state) => state.createProduct);
   const { userInfo } = useSelector((state) => state.loggedinUser);
 
   useEffect(() => {
-    if (userInfo && userInfo.isAdmin) dispatch(getProducts());
-    else history.push('/login');
-  }, [dispatch, history, userInfo, deleteSuccess]);
+    dispatch({ type: PRODUCT_CREATE_RESET });
+
+    if (userInfo && !userInfo.isAdmin) history.push('/login');
+
+    if (createSuccess)
+      history.push(`/admin/product/${createdProduct._id}/edit`);
+
+    dispatch(getProducts());
+  }, [
+    dispatch,
+    history,
+    userInfo,
+    deleteSuccess,
+    createSuccess,
+    createdProduct,
+  ]);
 
   const deleteHandler = (id) => {
     if (window.confirm("Hope you know what you're doing!"))
@@ -29,7 +53,7 @@ const ProductListScreen = ({ history, match }) => {
   };
 
   const createHandler = () => {
-    // true;
+    dispatch(createProduct());
   };
 
   return (
@@ -46,6 +70,9 @@ const ProductListScreen = ({ history, match }) => {
       </Row>
       {deleteLoading && <Loader />}
       {deleteError && <Message variant='danger'>{deleteError}</Message>}
+
+      {createLoading && <Loader />}
+      {createError && <Message variant='danger'>{createError}</Message>}
 
       {loading ? (
         <Loader />

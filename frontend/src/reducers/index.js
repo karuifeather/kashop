@@ -13,6 +13,7 @@ import {
 } from './userReducer';
 
 import {
+  productCreateReducer,
   productDeleteReducer,
   productListReducer,
   productReducer,
@@ -28,6 +29,7 @@ export default combineReducers({
   products: productListReducer,
   currentProduct: productReducer,
   deleteProduct: productDeleteReducer,
+  createProduct: productCreateReducer,
   cart: cartReducer,
   loggedinUser: userAuthReducer,
   newUser: userRegisterReducer,
