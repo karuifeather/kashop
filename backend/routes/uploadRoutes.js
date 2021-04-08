@@ -1,6 +1,7 @@
 import path from 'path';
 import express from 'express';
 import multer from 'multer';
+import { protect, restrictToAdmin } from '../controllers/authController.js';
 
 const router = new express.Router();
 
@@ -12,7 +13,7 @@ const storage = multer.diskStorage({
   filename(req, file, cb) {
     cb(
       null,
-      `${file.fieldname}-${new Date.now()}${path.extname(file.originalname)}`
+      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
     );
   },
 });
@@ -33,11 +34,17 @@ const upload = multer({
   },
 });
 
-router.post('/', upload.single('image'), (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: { imageUrl: `/${req.file.path}` },
-  });
-});
+router.post(
+  '/',
+  protect,
+  restrictToAdmin,
+  upload.single('image'),
+  (req, res) => {
+    res.status(200).json({
+      status: 'success',
+      data: { imageUrl: `/${req.file.path}` },
+    });
+  }
+);
 
 export default router;

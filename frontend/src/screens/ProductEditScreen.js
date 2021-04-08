@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
@@ -6,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { getProduct, updateProduct } from '../actions/productActions';
 import { PRODUCT_UPDATE_RESET } from '../actions/types';
+import { upload } from '../api';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
@@ -77,13 +77,7 @@ const ProductEditScreen = ({ match, history }) => {
     setUploading(true);
 
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      };
-
-      const { data } = await axios.post('/api/v1/upload', formData, config);
+      const { data } = await upload.post('', formData);
       setImage(data.data.imageUrl);
       setUploading(false);
     } catch (e) {
