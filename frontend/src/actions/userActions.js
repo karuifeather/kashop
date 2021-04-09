@@ -1,5 +1,6 @@
 import { getProfile, userLogin } from '../api';
 import {
+  ORDER_LIST_RESET,
   USER_DELETE_FAIL,
   USER_DELETE_REQ,
   USER_DELETE_SUCCESS,
@@ -55,6 +56,7 @@ export const logout = () => async (dispatch) => {
   localStorage.removeItem('userInfo');
 
   dispatch({ type: USER_LOGOUT });
+  dispatch({ type: ORDER_LIST_RESET });
   dispatch({ type: USER_LIST_RESET });
 };
 

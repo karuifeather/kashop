@@ -168,3 +168,15 @@ export const getOrders = asyncHandler(async (req, res, next) => {
     data: { orders },
   });
 });
+
+// @desc    Get orders
+// @route   GET /api/v1/orders
+// @access  Private/Admin
+export const getAllOrders = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find({}).populate('user', 'id name ');
+
+  res.status(200).json({
+    status: 'success',
+    data: { orders },
+  });
+});

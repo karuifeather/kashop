@@ -23,6 +23,7 @@ import {
 import {
   createOrderReducer,
   orderDetailsReducer,
+  ordersListReducer,
   ordersMyListReducer,
 } from './orderReducer';
 
@@ -43,4 +44,5 @@ export default combineReducers({
   createdOrder: createOrderReducer,
   orderDetails: orderDetailsReducer,
   myOrders: ordersMyListReducer,
+  allOrders: ordersListReducer,
 });
