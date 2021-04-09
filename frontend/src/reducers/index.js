@@ -22,6 +22,7 @@ import {
 
 import {
   createOrderReducer,
+  deliverOrderReducer,
   orderDetailsReducer,
   ordersListReducer,
   ordersMyListReducer,
@@ -42,6 +43,7 @@ export default combineReducers({
   userUpdateByAdmin: userUpdateByAdminReducer,
   updatedUserProfile: userUpdateReducer,
   createdOrder: createOrderReducer,
+  deliverOrder: deliverOrderReducer,
   orderDetails: orderDetailsReducer,
   myOrders: ordersMyListReducer,
   allOrders: ordersListReducer,

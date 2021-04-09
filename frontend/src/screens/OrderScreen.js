@@ -8,7 +8,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { getOrderDetails } from '../actions/orderActions';
+import { getOrderDetails, deliverOrder } from '../actions/orderActions';
+import { ORDER_DELIVER_RESET } from '../actions/types';
 
 const OrderScreen = ({ match, stripe, location, history }) => {
   const orderId = match.params.id;
@@ -17,6 +18,10 @@ const OrderScreen = ({ match, stripe, location, history }) => {
   const paid = location.search.split('=')[1];
 
   const { loading, error, order } = useSelector((state) => state.orderDetails);
+  const { userInfo } = useSelector((state) => state.loggedinUser);
+  const { loading: dLoading, error: dError, success: dSuccess } = useSelector(
+    (state) => state.deliverOrder
+  );
 
   if (!loading && !error) {
     order.itemsPrice = order.orderItems.reduce(
@@ -26,7 +31,14 @@ const OrderScreen = ({ match, stripe, location, history }) => {
   }
 
   useEffect(() => {
-    dispatch(getOrderDetails(orderId));
+    if (!userInfo) history.push('/login');
+
+    if (!order || orderId !== order._id) dispatch(getOrderDetails(orderId));
+
+    if (dSuccess) {
+      dispatch({ type: ORDER_DELIVER_RESET });
+      dispatch(getOrderDetails(orderId));
+    }
 
     // TODO: Remove this logic in production
     // no need to do it manually: stripe does it for us
@@ -37,7 +49,7 @@ const OrderScreen = ({ match, stripe, location, history }) => {
       history.push(`/order/${orderId}`);
     }
     // eslint-disable-next-line
-  }, [dispatch, orderId, paid]);
+  }, [dispatch, orderId, paid, dSuccess]);
 
   const onPayClick = () => {
     async function createCheckout() {
@@ -47,6 +59,10 @@ const OrderScreen = ({ match, stripe, location, history }) => {
     }
 
     createCheckout();
+  };
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(orderId));
   };
 
   return loading ? (
@@ -63,11 +79,13 @@ const OrderScreen = ({ match, stripe, location, history }) => {
               <h2>Shipping</h2>
               <p>
                 <strong>Name: </strong>
-                {order.user.name}
+                {order.user && order.user.name}
               </p>
               <p>
                 <strong>Email: </strong>
-                <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
+                <a href={`mailto:${order.user && order.user.email}`}>
+                  {order.user && order.user.email}
+                </a>
               </p>
               <p>
                 <strong>Address: </strong>
@@ -76,7 +94,9 @@ const OrderScreen = ({ match, stripe, location, history }) => {
                 {order.shippingAddress.country}
               </p>
               {order.isDelivered ? (
-                <Message variant='success'>Paid on{order.deliveredAt}</Message>
+                <Message variant='success'>
+                  Delivered on {order.deliveredAt}
+                </Message>
               ) : (
                 <Message variant='danger'>Not delivered</Message>
               )}
@@ -176,6 +196,21 @@ const OrderScreen = ({ match, stripe, location, history }) => {
                   </Col>
                 </Row>
               </ListGroup.Item>
+              {dLoading && <Loader />}
+              {dError && <Message variant='danger'>{dError}</Message>}
+              {userInfo && userInfo.isAdmin && (
+                <ListGroup.Item>
+                  <Button
+                    className='btn-block'
+                    type='button'
+                    disabled={!order.isPaid || order.isDelivered}
+                    onClick={deliverHandler}
+                    variant='primary'
+                  >
+                    Mark as Delivered
+                  </Button>
+                </ListGroup.Item>
+              )}
             </ListGroup>
           </Card>
         </Col>

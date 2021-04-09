@@ -180,3 +180,23 @@ export const getAllOrders = asyncHandler(async (req, res, next) => {
     data: { orders },
   });
 });
+
+// @desc    Update order to delivered
+// @route   PATCH /api/v1/orders/:id
+// @access  Private/Admin
+export const updateOrderToDelivered = asyncHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    return next(new AppError('Order not found.', 404));
+  }
+
+  order.isDelivered = true;
+  order.deliveredAt = Date.now() - 2000;
+  const updatedOrder = await order.save();
+
+  res.status(200).json({
+    status: 'success',
+    data: { order: updatedOrder },
+  });
+});

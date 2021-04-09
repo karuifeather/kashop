@@ -13,6 +13,9 @@ import {
   ORDER_LIST_REQ,
   ORDER_LIST_SUCCESS,
   ORDER_LIST_FAIL,
+  ORDER_DELIVER_REQ,
+  ORDER_DELIVER_SUCCESS,
+  ORDER_DELIVER_FAIL,
 } from './types';
 import { orders } from '../api';
 
@@ -69,6 +72,36 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
   }
 };
 
+export const deliverOrder = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ORDER_DELIVER_REQ });
+
+    const {
+      loggedinUser: { userToken },
+    } = getState();
+
+    const { data } = await orders.patch(
+      `/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+
+    dispatch({ type: ORDER_DELIVER_SUCCESS, payload: data.data.order });
+  } catch (e) {
+    dispatch({
+      type: ORDER_DELIVER_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
 export const getMyOrders = () => async (dispatch, getState) => {
   try {
     dispatch({ type: ORDER_MY_LIST_REQ });
@@ -108,8 +141,6 @@ export const getOrders = () => async (dispatch, getState) => {
         Authorization: `Bearer ${userToken}`,
       },
     });
-
-    console.log(data.data);
 
     dispatch({ type: ORDER_LIST_SUCCESS, payload: data.data.orders });
   } catch (e) {
