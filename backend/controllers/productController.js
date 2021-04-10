@@ -72,7 +72,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
 // @desc    Update product by ID
 // @route   PATCH /api/v1/products/:id
-// @access  Public/Admin
+// @access  Private/Admin
 export const updateProduct = asyncHandler(async (req, res, next) => {
   const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
@@ -85,5 +85,47 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   res.status(202).json({
     status: 'success',
     data: { product },
+  });
+});
+
+// @desc    Create new review
+// @route   POST /api/v1/:id/reviews
+// @access  Private
+export const createProductReview = asyncHandler(async (req, res, next) => {
+  const { rating, comment } = req.body;
+
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    return next(new AppError('No product with that ID can be found.', 404));
+  }
+
+  const alreadyReviewed = products.reviews.find(
+    (r) => r.user.toString() === req.user._id.toString()
+  );
+
+  if (alreadyReviewed)
+    return next(new AppError('One review per product.', 400));
+
+  const review = {
+    name: req.user.name,
+    comment,
+    rating: Number(rating),
+    user: req.user._id,
+  };
+
+  product.reviews.push(review);
+
+  product.numReviews = product.reviews.length;
+
+  product.rating =
+    product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+    product.numReviews;
+
+  await product.save();
+
+  res.status(201).json({
+    status: 'success',
+    data: { message: 'Review added.' },
   });
 });
