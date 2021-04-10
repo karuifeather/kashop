@@ -3,10 +3,19 @@ import AppError from '../utils/appError.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
 // @desc    Fetch all products
-// @route   GET /api/v1/products
+// @route   GET /api/v1/products?keyword=SOME_STRING
 // @access  Public
 export const getProducts = asyncHandler(async (req, res, next) => {
-  const products = await Product.find({});
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i',
+        },
+      }
+    : {};
+
+  const products = await Product.find({ ...keyword });
 
   res.status(200).json({
     status: 'success',
@@ -104,8 +113,7 @@ export const createProductReview = asyncHandler(async (req, res, next) => {
     (r) => r.user.toString() === req.user._id.toString()
   );
 
-  if (alreadyReviewed)
-    return next(new AppError('One review per product.', 400));
+  if (alreadyReviewed) return next(new AppError('One review per user.', 400));
 
   const review = {
     name: req.user.name,

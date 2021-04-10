@@ -20,11 +20,13 @@ import {
   PRODUCT_CREATE_REVIEW_FAIL,
 } from '../actions/types';
 
-export const getProducts = () => async (dispatch) => {
+export const getProducts = (keyword) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQ });
 
-    const { data } = await products.get();
+    const query = keyword ? `?keyword=${keyword}` : '';
+
+    const { data } = await products.get(query);
 
     dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data.data.products });
   } catch (e) {
