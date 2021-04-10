@@ -15,6 +15,9 @@ import {
   PRODUCT_UPDATE_REQ,
   PRODUCT_UPDATE_SUCCESS,
   PRODUCT_UPDATE_FAIL,
+  PRODUCT_CREATE_REVIEW_REQ,
+  PRODUCT_CREATE_REVIEW_SUCCESS,
+  PRODUCT_CREATE_REVIEW_FAIL,
 } from '../actions/types';
 
 export const getProducts = () => async (dispatch) => {
@@ -128,6 +131,36 @@ export const updateProduct = (newProduct) => async (dispatch, getState) => {
   } catch (e) {
     dispatch({
       type: PRODUCT_UPDATE_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
+export const createProductReview = (productId, review) => async (
+  dispatch,
+  getState
+) => {
+  try {
+    dispatch({ type: PRODUCT_CREATE_REVIEW_REQ });
+
+    const {
+      loggedinUser: { userToken },
+    } = getState();
+
+    await products.post(`${productId}/reviews`, review, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    dispatch({ type: PRODUCT_CREATE_REVIEW_SUCCESS });
+  } catch (e) {
+    dispatch({
+      type: PRODUCT_CREATE_REVIEW_FAIL,
       payload:
         e.response && e.response.data.message
           ? e.response.data.message

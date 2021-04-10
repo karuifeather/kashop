@@ -100,7 +100,7 @@ export const createProductReview = asyncHandler(async (req, res, next) => {
     return next(new AppError('No product with that ID can be found.', 404));
   }
 
-  const alreadyReviewed = products.reviews.find(
+  const alreadyReviewed = product.reviews.find(
     (r) => r.user.toString() === req.user._id.toString()
   );
 
