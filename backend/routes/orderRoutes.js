@@ -21,6 +21,6 @@ router.patch('/:id', protect, restrictToAdmin, updateOrderToDelivered);
 router.get('/checkout/:orderId', getCheckoutSession);
 
 // FOR TESTing only!! DISABLE THIS ROUTE IN PRODUCTION!!
-router.get('/pay/:orderId', updateOrderToPaidTest);
+// router.get('/pay/:orderId', updateOrderToPaidTest);
 
 export default router;

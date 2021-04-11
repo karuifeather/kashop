@@ -17,8 +17,8 @@ export const getCheckoutSession = asyncHandler(async (req, res, next) => {
   // 2. Create checkout session
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    success_url: `http://127.0.0.1:3000/order/${orderId}?paid=true`,
-    cancel_url: `http://127.0.0.1:3000/order/${orderId}`,
+    success_url: `${req.protocol}://${req.get('host')}/order/${orderId}`,
+    cancel_url: `${req.protocol}://${req.get('host')}/`,
     customer_email: order.user.email,
     client_reference_id: req.params.orderId,
     mode: 'payment',
@@ -100,14 +100,10 @@ export const getOrder = asyncHandler(async (req, res, next) => {
 const updateOrderToPaid = async (sessionData) => {
   const order = await Order.findById(sessionData.client_reference_id);
 
-  if (!order) {
-    return next(new AppError('Order not found.', 404));
-  }
-
   order.isPaid = true;
   order.paidAt = Date.now() - 2000;
 
-  return await order.save();
+  await order.save();
 };
 
 // Use in development only
@@ -142,7 +138,6 @@ export const webhookCheckout = (req, res, next) => {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
-    // event = JSON.parse(req.body);
   } catch (e) {
     // to Stripe
     return res.status(400).send(`Webhook error: ${e}`);
