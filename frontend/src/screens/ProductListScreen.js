@@ -11,8 +11,11 @@ import {
 import { PRODUCT_CREATE_RESET } from '../actions/types';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
+import Paginate from '../components/Paginate';
 
 const ProductListScreen = ({ history, match }) => {
+  const pageNumber = match.params.pageNumber || 1;
+
   const dispatch = useDispatch();
 
   const {
@@ -20,13 +23,18 @@ const ProductListScreen = ({ history, match }) => {
     loading: deleteLoading,
     error: deleteError,
   } = useSelector((state) => state.deleteProduct);
-  const { list, loading, error } = useSelector((state) => state.products);
+
+  const { list, loading, error, page, pages } = useSelector(
+    (state) => state.products
+  );
+
   const {
     product: createdProduct,
     loading: createLoading,
     success: createSuccess,
     error: createError,
   } = useSelector((state) => state.createProduct);
+
   const { userInfo } = useSelector((state) => state.loggedinUser);
 
   useEffect(() => {
@@ -37,7 +45,7 @@ const ProductListScreen = ({ history, match }) => {
     if (createSuccess)
       history.push(`/admin/product/${createdProduct._id}/edit`);
 
-    dispatch(getProducts());
+    dispatch(getProducts('', pageNumber));
   }, [
     dispatch,
     history,
@@ -45,6 +53,7 @@ const ProductListScreen = ({ history, match }) => {
     deleteSuccess,
     createSuccess,
     createdProduct,
+    pageNumber,
   ]);
 
   const deleteHandler = (id) => {
@@ -117,6 +126,7 @@ const ProductListScreen = ({ history, match }) => {
               ))}
             </tbody>
           </Table>
+          <Paginate pages={pages} page={page} isAdmin={true} />
         </>
       )}
     </>

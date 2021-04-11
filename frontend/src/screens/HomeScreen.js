@@ -6,17 +6,19 @@ import { getProducts } from '../actions/productActions';
 import Product from '../components/Product';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
+import Paginate from '../components/Paginate';
 
 const HomeScreen = ({ match }) => {
   const keyword = match.params.keyword;
+  const pageNumber = match.params.pageNumber || 1;
   const dispatch = useDispatch();
 
   const products = useSelector((state) => state.products);
-  const { list, loading, error } = products;
+  const { list, loading, error, page, pages } = products;
 
   useEffect(() => {
-    dispatch(getProducts(keyword));
-  }, [dispatch, keyword]);
+    dispatch(getProducts(keyword, pageNumber));
+  }, [dispatch, keyword, pageNumber]);
 
   return (
     <>
@@ -34,6 +36,11 @@ const HomeScreen = ({ match }) => {
               </Col>
             ))}
           </Row>
+          <Paginate
+            pages={pages}
+            page={page}
+            keyword={keyword ? keyword : ''}
+          />
         </>
       )}
     </>

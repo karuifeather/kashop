@@ -6,6 +6,9 @@ import asyncHandler from '../utils/asyncHandler.js';
 // @route   GET /api/v1/products?keyword=SOME_STRING
 // @access  Public
 export const getProducts = asyncHandler(async (req, res, next) => {
+  const perPage = 10;
+  const pageNumber = Number(req.query.page) || 1;
+
   const keyword = req.query.keyword
     ? {
         name: {
@@ -15,12 +18,15 @@ export const getProducts = asyncHandler(async (req, res, next) => {
       }
     : {};
 
-  const products = await Product.find({ ...keyword });
+  const count = await Product.countDocuments({ ...keyword });
+  const products = await Product.find({ ...keyword })
+    .limit(perPage)
+    .skip((pageNumber - 1) * perPage);
 
   res.status(200).json({
     status: 'success',
     results: products.length,
-    data: { products },
+    data: { products, page: pageNumber, pages: Math.ceil(count / perPage) },
   });
 });
 
