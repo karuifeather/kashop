@@ -17,8 +17,8 @@ export const getCheckoutSession = asyncHandler(async (req, res, next) => {
   // 2. Create checkout session
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    success_url: `${req.protocol}://${req.get('host')}/order/${orderId}`,
-    cancel_url: `${req.protocol}://${req.get('host')}/`,
+    success_url: `https://${req.get('host')}/order/${orderId}`,
+    cancel_url: `https://${req.get('host')}/`,
     customer_email: order.user.email,
     client_reference_id: req.params.orderId,
     mode: 'payment',
@@ -129,6 +129,7 @@ export const updateOrderToPaidTest = asyncHandler(async (req, res, next) => {
 // @access  By Stripe API
 export const webhookCheckout = (req, res, next) => {
   const signature = req.headers['stripe-signature'];
+  console.log(signature);
 
   let event;
 
@@ -140,6 +141,7 @@ export const webhookCheckout = (req, res, next) => {
     );
   } catch (e) {
     // to Stripe
+    console.log(e);
     return res.status(400).send(`Webhook error: ${e}`);
   }
 
