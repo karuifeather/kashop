@@ -15,7 +15,7 @@ const OrderScreen = ({ match, stripe, location, history }) => {
   const orderId = match.params.id;
   const dispatch = useDispatch();
 
-  const paid = location.search.split('=')[1];
+  // const paid = location.search.split('=')[1];
 
   const { loading, error, order } = useSelector((state) => state.orderDetails);
   const { userInfo } = useSelector((state) => state.loggedinUser);
@@ -42,14 +42,14 @@ const OrderScreen = ({ match, stripe, location, history }) => {
 
     // TODO: Remove this logic in production
     // no need to do it manually: stripe does it for us
-    if (Boolean(paid)) {
-      axios.get(`/api/v1/orders/pay/${orderId}`);
+    // if (Boolean(paid)) {
+    //   axios.get(`/api/v1/orders/pay/${orderId}`);
 
-      dispatch(getOrderDetails(orderId));
-      history.push(`/order/${orderId}`);
-    }
+    //   dispatch(getOrderDetails(orderId));
+    //   history.push(`/order/${orderId}`);
+    // }
     // eslint-disable-next-line
-  }, [dispatch, orderId, paid, dSuccess]);
+  }, [dispatch, orderId, dSuccess]);
 
   const onPayClick = () => {
     async function createCheckout() {
