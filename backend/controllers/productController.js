@@ -143,3 +143,15 @@ export const createProductReview = asyncHandler(async (req, res, next) => {
     data: { message: 'Review added.' },
   });
 });
+
+// @desc    Fetch top products
+// @route   GET /api/v1/products/top
+// @access  Public
+export const getTopProducts = asyncHandler(async (req, res, next) => {
+  const products = await Product.find({}).sort({ rating: -1 }).limit(5);
+
+  res.status(200).json({
+    status: 'success',
+    data: { products },
+  });
+});

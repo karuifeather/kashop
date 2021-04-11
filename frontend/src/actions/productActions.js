@@ -18,6 +18,9 @@ import {
   PRODUCT_CREATE_REVIEW_REQ,
   PRODUCT_CREATE_REVIEW_SUCCESS,
   PRODUCT_CREATE_REVIEW_FAIL,
+  PRODUCT_TOP_REQ,
+  PRODUCT_TOP_SUCCESS,
+  PRODUCT_TOP_FAIL,
 } from '../actions/types';
 
 export const getProducts = (keyword, page = 1) => async (dispatch) => {
@@ -34,6 +37,24 @@ export const getProducts = (keyword, page = 1) => async (dispatch) => {
   } catch (e) {
     dispatch({
       type: PRODUCT_LIST_FAIL,
+      payload:
+        e.response && e.response.data.message
+          ? e.response.data.message
+          : e.message,
+    });
+  }
+};
+
+export const getTopProducts = () => async (dispatch) => {
+  try {
+    dispatch({ type: PRODUCT_TOP_REQ });
+
+    const { data } = await products.get('/top');
+
+    dispatch({ type: PRODUCT_TOP_SUCCESS, payload: data.data.products });
+  } catch (e) {
+    dispatch({
+      type: PRODUCT_TOP_FAIL,
       payload:
         e.response && e.response.data.message
           ? e.response.data.message

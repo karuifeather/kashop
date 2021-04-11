@@ -6,12 +6,15 @@ import {
   deleteProduct,
   getProduct,
   getProducts,
+  getTopProducts,
   updateProduct,
 } from '../controllers/productController.js';
 
 import { protect, restrictToAdmin } from '../controllers/authController.js';
 
 const router = express.Router();
+
+router.get('/top', getTopProducts);
 
 router
   .route('/')

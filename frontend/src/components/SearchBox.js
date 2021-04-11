@@ -21,9 +21,10 @@ const SearchBox = ({ history }) => {
         name='q'
         onChange={(e) => setKeyword(e.target.value)}
         placeholder='Search Products...'
+        autocomplete='off'
         className='mr-sm-2 ml-sm-5'
       ></Form.Control>
-      <Button type='submit' variant='outline-primary' className='p-2'>
+      <Button type='submit' variant='outline-dark' className='p-2'>
         Search
       </Button>
     </Form>
