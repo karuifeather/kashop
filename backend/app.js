@@ -30,6 +30,14 @@ app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/upload', uploadRouter);
 
 const __dirname = path.resolve();
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/frontend/build')));
+
+  app.all('*', (req, res, next) => {
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+  });
+}
+
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.all('*', (req, res, next) => {

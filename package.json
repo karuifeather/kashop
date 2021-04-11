@@ -10,7 +10,8 @@
     "start:client": "npm start --prefix frontend",
     "dev": "concurrently \"npm run start:server\" \"npm run start:client\"",
     "import:data": "node backend/transfer -i",
-    "destroy:data": "node backend/transfer -d"
+    "destroy:data": "node backend/transfer -d",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "mE",
